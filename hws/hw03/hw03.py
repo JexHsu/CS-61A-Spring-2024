@@ -28,6 +28,10 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    else:
+        return (1 if n % 10 == 8 else 0) + num_eights(n // 10)
 
 
 def digit_distance(n):
@@ -50,6 +54,10 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n < 10:
+        return 0
+    else:
+        return abs(n % 10 - n // 10 % 10) + digit_distance(n // 10)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -72,6 +80,22 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+    """
+    if (n == 0):
+        return 0
+    elif (n & 1 != 0):
+        return odd_func(n) + interleaved_sum(n - 1, odd_func, even_func)
+    else:
+        return even_func(n) + interleaved_sum(n - 1, odd_func, even_func)
+    """
+    def helper(i, flag):
+        if (i == n + 1):
+            return 0
+        elif flag:
+            return odd_func(i) + helper(i + 1, False)
+        else:
+            return even_func(i) + helper(i + 1, True)
+    return helper(1, True)
 
 
 def next_larger_coin(coin):
@@ -126,6 +150,23 @@ def count_coins(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    # solution1
+    #
+    # def count_ways(total, coin):
+    #     if total == 0:
+    #         return 1
+    #     if total < 0 or coin is None:
+    #         return 0
+    #     return count_ways(total - coin, coin) + count_ways(total, next_smaller_coin(coin))
+    # return count_ways(total, 25)
+
+    def count_ways(total, coin):
+        if total == 0:
+            return 1
+        if total < 0 or coin is None:
+            return 0
+        return count_ways(total - coin, coin) + count_ways(total, next_larger_coin(coin))
+    return count_ways(total, 1)
 
 
 def print_move(origin, destination):
@@ -161,7 +202,12 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
-
+    if n == 0:
+        return
+    other = 6 - start - end
+    move_stack(n - 1, start, other)
+    print_move(start, end)
+    move_stack(n - 1, other, end)
 
 from operator import sub, mul
 
@@ -176,5 +222,6 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return lambda n: (lambda f: f(f, n))(lambda f, x: 1 if x == 0 else mul(x, f(f, sub(x, 1))))
+
 
